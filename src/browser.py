@@ -4,6 +4,23 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 from env import settings
 
+_driver = None
+_logged_in = False
+
+def get_session():
+  global _driver, _logged_in
+  if _driver is None:
+    _driver = init_browser()
+  if not _logged_in:
+    from webscraping import login_routine
+    for attempt in range(3):
+      if login_routine(_driver):
+        _logged_in = True
+        break
+      if attempt == 2:
+        raise RuntimeError('Login falhou 3 vezes seguidas')
+  return _driver
+
 def init_browser():
   options = Options()
   for argument in settings.chromium_arguments:

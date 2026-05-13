@@ -43,6 +43,9 @@ def login_routine(driver):
 
   return login_success
 
+def normalize_period(period):
+  return (int(period[0:4]), int(period[5:]))
+
 def get_periods(driver, id):
   # Ir para a página de boletim
   driver.get(f'https://suap.ifsp.edu.br/edu/aluno/{id}/?tab=boletim')
@@ -58,7 +61,7 @@ def get_periods(driver, id):
   # Listar períodos
   select = find_element(driver, By.CSS_SELECTOR, '#ano_periodo')
   options = select.find_elements(By.TAG_NAME, 'option')
-  result = [{'value': option.get_attribute('value'), 'label': option.text.strip()} for option in options]
+  result = [normalize_period(option.get_attribute('value')) for option in options]
 
   # Retornar períodos
   return result
